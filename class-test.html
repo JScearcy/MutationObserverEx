@@ -4,11 +4,34 @@
         <link rel="stylesheet" href="./site.css">
     </head>
     <body>
-        <p id="watch-me">Change Me</p>
-        <button onclick="changeClass()">Change Class</button>
+        <section class="example">
+            <p id="watch-me">Change Me</p>
+            <button onclick="changeClass()">Change Class</button>
 
-        <p id="change-me">I'll change too</p>
+            <p id="change-me">I'll change too</p>
+        </section>
+
+        <section> 
+            <form id="example-form">
+                <div>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="login" />
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="login" />
+                </div>
+                <div>
+                    <input type="submit" id="submit" />
+                </div>
+                <div class="all-inputs">
+                    <canvas id="form-results"></canvas>
+                </div>
+            </form>
+        </section>
+
         <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+        <script src="./usage.js"></script>
         <script src="./watcher.js"></script>
     </body>
 </html>

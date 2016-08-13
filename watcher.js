@@ -1,17 +1,6 @@
-var watcher;
-$(function() {
-    var watchConfig = {
-        watchId: "watch-me",
-        watchClass: "changed",
-        effectId: "change-me",
-        effectClass: "indirect-change"
-    }
-    watcher = new ClassWatcher(watchConfig);
-    watcher.start();
-});
-
-function ClassWatcher (config) {
+function ElementWatcher (config) {
     var tracker;
+
     return {
         start: start,
         stop: stop
@@ -29,40 +18,32 @@ function ClassWatcher (config) {
         tracker = setWatch(config);
     }
 
+    
     function setWatch(config) {
-        var $el = $("#" + config.watchId),
+        var $el = $(config.watchSelector),
             mutObserver,
             intervalId,
-            mutConfig = { attributes: true };
+            mutConfig = { 
+                attributes: true,
+                childList: true, 
+                subtree: true, 
+                characterData: true,
+                attributeOldValue: true,
+                characterDataOldValue: true,
+             };
 
         if (MutationObserver) {
             mutObserver = new MutationObserver(
-                function mutCallback (mutation) {
-                    checkClass($el, config.watchClass, config.effectId, config.effectClass);
+                function mutCallback (mutations) {
+                    config.callback.bind(mutations)();
                 }
             );
             mutObserver.observe($el.get(0), mutConfig);
         } else {
-            intervalId = setInterval(intervalWatch($el, config.watchClass, config.effectId, config.effectClass), 100);
+            if (config.fillCallback) {
+                intervalId = setInterval(config.fillCallback, 200);
+            }
         }
         return mutObserver || intervalId;
     }
-
-    function intervalWatch (el, watchClass, effectId, effectClass) {
-        return function () {
-            checkClass(el, watchClass, effectId, effectClass);
-        }
-    }
-
-    function checkClass($target, watchClass, id, toggleClass) {
-        if ($target.hasClass(watchClass)) {
-            $("#" + id).addClass(toggleClass);
-        } else {
-            $("#" + id).removeClass(toggleClass);
-        }
-    }
-}
-
-function changeClass () {
-    $("#watch-me").toggleClass("changed");
 }
