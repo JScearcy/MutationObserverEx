@@ -1,5 +1,9 @@
 function ElementWatcher (config) {
     var tracker;
+    
+    if (typeof config.callback != 'function' || typeof config.fillCallback != 'function') {
+        throw new Error("The config object must have a callback and a polyfill callback");
+    }
 
     return {
         start: start,
