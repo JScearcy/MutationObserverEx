@@ -1,6 +1,6 @@
-function ElementWatcher (config) {
+function ElementWatcher (config, mutConfig) {
     var tracker;
-    
+    mutConfig = mutConfig || {};
     if (typeof config.callback != 'function' || typeof config.fillCallback != 'function') {
         throw new Error("The config object must have a callback and a polyfill callback");
     }
@@ -21,19 +21,18 @@ function ElementWatcher (config) {
     function start() {
         tracker = setWatch(config);
     }
-
     
     function setWatch(config) {
-        var $el = $(config.watchSelector),
-            mutObserver,
+        var mutObserver,
             intervalId,
-            mutConfig = { 
-                attributes: true,
-                childList: true, 
-                subtree: true, 
-                characterData: true,
-                attributeOldValue: true,
-                characterDataOldValue: true,
+            mutationObsConfig = { 
+                attributes: mutConfig.attributes || true,
+                childList: mutConfig.childList || false, 
+                subtree: mutConfig.subtree || false, 
+                characterData: mutConfig.characterData || false,
+                attributeOldValue: mutConfig.attributeOldValue || false,
+                characterDataOldValue: mutConfig.characterDataOldValue || false,
+                attrubuteFiler: mutConfig.attributeFilter || []
              };
 
         if (MutationObserver) {
@@ -42,7 +41,7 @@ function ElementWatcher (config) {
                     config.callback.bind(mutations)();
                 }
             );
-            mutObserver.observe($el.get(0), mutConfig);
+            mutObserver.observe(document.getElementById(config.watchId), mutationObsConfig);
         } else {
             if (config.fillCallback) {
                 intervalId = setInterval(config.fillCallback, 200);

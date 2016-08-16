@@ -1,9 +1,10 @@
 var watcher;
+
 $(function() {
     var watchConfig = {
-        watchSelector: "#watch-me",
-        callback: checkClass($("#watch-me"), "changed", "#change-me", "indirect-change"),
-        fillCallback: checkClass($("#watch-me"), "changed", "#change-me", "indirect-change")
+        watchId: "watch-me",
+        callback: watchCb,
+        fillCallback: checkClass
     }
 
     $("#submit").click(function (e) {
@@ -19,15 +20,22 @@ function changeClass () {
     $("#watch-me").toggleClass("changed");
 }
 
+function watchCb () {
+    var watchItems = this.filter(function(mutation) {
+        var targetMutated = mutation.target.id == "watch-me";
+        var classMutated = mutation.attributeName && mutation.attributeName == "class";
+        return targetMutated && classMutated;
+    });
 
+    if (watchItems.length >= 1) {
+        checkClass();
+    }
+}
 
-function checkClass($target, watchClass, effectSelector, toggleClass) {
-    return function() {
-        console.log(this);
-        if ($target.hasClass(watchClass)) {
-            $(effectSelector).addClass(toggleClass);
-        } else {
-            $(effectSelector).removeClass(toggleClass);
-        }
+function checkClass() {
+    if ($("#watch-me").hasClass("changed")) {
+        $("#change-me").addClass("indirect-change");
+    } else {
+        $("#change-me").removeClass("indirect-change");
     }
 }
